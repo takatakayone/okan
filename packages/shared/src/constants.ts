@@ -1,0 +1,9 @@
+export const WS_PORT = 9393;
+export const HTTP_PORT = 9394;
+export const WS_URL = `ws://localhost:${WS_PORT}`;
+export const HTTP_URL = `http://localhost:${HTTP_PORT}`;
+export const KEEPALIVE_INTERVAL_MS = 20_000;
+export const PERMISSION_TIMEOUT_MS = 300_000;
+export const DEFAULT_WARP_URL = "https://www.youtube.com";
+export const CONFIG_DIR = ".okan";
+export const CONFIG_FILE = "config.json";
