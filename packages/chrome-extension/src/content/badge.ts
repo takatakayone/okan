@@ -22,7 +22,7 @@
     hi: { working: "काम चल रहा है...", permTitle: "Claude पूछ रहा है", back: "वापस" },
   };
   function t(locale: string) { return UI[locale] ?? UI.en; }
-  let locale = "ja";
+  let locale = "en";
 
   // --- Styles (declared early so DOM setup can use it) ---
   const STYLES = `

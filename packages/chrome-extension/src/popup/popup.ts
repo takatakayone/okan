@@ -120,13 +120,7 @@ applyI18n(fallbackLocale);
 toggle.addEventListener("change", () => {
   const enabled = toggle.checked;
   chrome.storage.local.set({ okanEnabled: enabled });
-  chrome.tabs.query({}, (tabs) => {
-    for (const tab of tabs) {
-      if (tab.id && tab.url?.match(/^https?:\/\//)) {
-        chrome.tabs.sendMessage(tab.id, { type: "okan_toggle", enabled }).catch(() => {});
-      }
-    }
-  });
+  chrome.runtime.sendMessage({ type: "okan_toggle", enabled });
 });
 
 // --- Mode ---
@@ -155,13 +149,13 @@ function setActiveMode(mode: string): void {
 
 langSelect.addEventListener("change", async () => {
   const locale = langSelect.value;
+  applyI18n(locale);
   try {
     await fetch(`${HTTP_API_BASE}/api/config`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ locale }),
     });
-    applyI18n(locale);
   } catch {}
 });
 

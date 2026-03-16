@@ -31,11 +31,13 @@ type ServerMessage = StateChangeMessage | TaskDoneMessage | PermissionRequestMes
 let ws: WebSocket | null = null;
 let lastState: StateChangeMessage | null = null;
 let lastTaskDone: TaskDoneMessage | null = null;
+let lastPermission: PermissionRequestMessage | null = null;
 
 // Restore cached state from session storage on service worker wake-up
-chrome.storage.session?.get(["lastState", "lastTaskDone"], (result) => {
+chrome.storage.session?.get(["lastState", "lastTaskDone", "lastPermission"], (result) => {
   if (result.lastState) lastState = result.lastState as StateChangeMessage;
   if (result.lastTaskDone) lastTaskDone = result.lastTaskDone as TaskDoneMessage;
+  if (result.lastPermission) lastPermission = result.lastPermission as PermissionRequestMessage;
 });
 
 // --- Connection ---
@@ -79,12 +81,17 @@ function connect(): void {
     // Cache state (persist to session storage for service worker restarts)
     if (msg.type === "state_change") {
       lastState = msg;
-      if (msg.state === "idle") lastTaskDone = null;
-      chrome.storage.session?.set({ lastState: msg, ...(msg.state === "idle" ? { lastTaskDone: null } : {}) });
+      if (msg.state === "idle") { lastTaskDone = null; lastPermission = null; }
+      chrome.storage.session?.set({ lastState: msg, ...(msg.state === "idle" ? { lastTaskDone: null, lastPermission: null } : {}) });
     }
     if (msg.type === "task_done") {
       lastTaskDone = msg;
-      chrome.storage.session?.set({ lastTaskDone: msg });
+      lastPermission = null;
+      chrome.storage.session?.set({ lastTaskDone: msg, lastPermission: null });
+    }
+    if (msg.type === "permission_request") {
+      lastPermission = msg;
+      chrome.storage.session?.set({ lastPermission: msg });
     }
 
     // Forward to all tabs
@@ -156,9 +163,16 @@ chrome.alarms.onAlarm.addListener((alarm) => {
   }
 });
 
-// --- Messages from content scripts ---
+// --- Messages from content scripts and popup ---
 
 chrome.runtime.onMessage.addListener((message, _sender, _sendResponse) => {
+  // Toggle from popup → broadcast to all tabs
+  if (message.type === "okan_toggle") {
+    broadcastToAllTabs(message);
+    return;
+  }
+
+  // Permission response / back_to_reality from content script → forward to server
   if (
     ws?.readyState === WebSocket.OPEN &&
     (message.type === "permission_response" || message.type === "back_to_reality")
@@ -175,15 +189,27 @@ async function syncStateToTab(tabId: number): Promise<void> {
     if (res.ok) {
       const data = (await res.json()) as { state: string };
       if (data.state && data.state !== "idle") {
-        chrome.tabs.sendMessage(tabId, { type: "state_change", state: data.state }).catch(() => {});
-        // Also send task_done if in done state
+        // Send the appropriate full message based on state
         if (data.state === "done" && lastTaskDone) {
           chrome.tabs.sendMessage(tabId, lastTaskDone).catch(() => {});
+        } else if (data.state === "waiting_permission" && lastPermission) {
+          chrome.tabs.sendMessage(tabId, lastPermission).catch(() => {});
+        } else {
+          chrome.tabs.sendMessage(tabId, { type: "state_change", state: data.state }).catch(() => {});
         }
       }
     }
   } catch {
-    sendCurrentStateToTab(tabId);
+    // Server not running, use cached messages
+    if (lastState && lastState.state !== "idle") {
+      if (lastState.state === "done" && lastTaskDone) {
+        chrome.tabs.sendMessage(tabId, lastTaskDone).catch(() => {});
+      } else if (lastState.state === "waiting_permission" && lastPermission) {
+        chrome.tabs.sendMessage(tabId, lastPermission).catch(() => {});
+      } else {
+        chrome.tabs.sendMessage(tabId, lastState).catch(() => {});
+      }
+    }
   }
 }
 
