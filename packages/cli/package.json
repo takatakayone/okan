@@ -1,0 +1,27 @@
+{
+  "name": "okan",
+  "version": "0.1.0",
+  "description": "Your AI task mom - watches your back while you browse",
+  "type": "module",
+  "bin": {
+    "okan": "./dist/bin/okan.js",
+    "okan-hook": "./dist/bin/okan-hook.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "postinstall": "node dist/src/postinstall.js || true",
+    "preuninstall": "node dist/src/preuninstall.js || true"
+  },
+  "dependencies": {
+    "@okan-ai/shared": "*",
+    "@okan-ai/server": "*",
+    "commander": "^13.1.0",
+    "chalk": "^5.4.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.8.0"
+  },
+  "keywords": ["claude", "claude-code", "ai", "cli", "productivity"],
+  "license": "MIT"
+}
