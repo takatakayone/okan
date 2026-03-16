@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "Okan - Your AI Task Mom",
+  "name": "Okan - Claude Code Browser Notifications",
   "version": "0.1.0",
   "description": "Watches your AI tasks and lets you know when they're done. Like a Japanese mom.",
   "minimum_chrome_version": "116",
