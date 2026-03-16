@@ -11,15 +11,15 @@
   interface DoneData { summary: string; mode: string; locale: string; }
 
   const UI: Record<string, { working: string; permTitle: string; back: string }> = {
-    en: { working: "working...", permTitle: "Claude is asking", back: "Back" },
-    ja: { working: "作業中...", permTitle: "Claude が聞いてるよ", back: "戻る" },
-    zh: { working: "工作中...", permTitle: "Claude 在问你", back: "返回" },
-    ko: { working: "작업 중...", permTitle: "Claude가 물어보고 있어", back: "돌아가기" },
-    es: { working: "trabajando...", permTitle: "Claude te pregunta", back: "Volver" },
-    fr: { working: "en cours...", permTitle: "Claude te demande", back: "Retour" },
-    de: { working: "arbeitet...", permTitle: "Claude fragt dich", back: "Zuruck" },
-    pt: { working: "trabalhando...", permTitle: "Claude esta perguntando", back: "Voltar" },
-    hi: { working: "काम चल रहा है...", permTitle: "Claude पूछ रहा है", back: "वापस" },
+    en: { working: "working...", permTitle: "Claude is asking", back: "Back to Terminal" },
+    ja: { working: "作業中...", permTitle: "Claude が聞いてるよ", back: "Terminal に戻る" },
+    zh: { working: "工作中...", permTitle: "Claude 在问你", back: "返回终端" },
+    ko: { working: "작업 중...", permTitle: "Claude가 물어보고 있어", back: "터미널로 돌아가기" },
+    es: { working: "trabajando...", permTitle: "Claude te pregunta", back: "Volver al terminal" },
+    fr: { working: "en cours...", permTitle: "Claude te demande", back: "Retour au terminal" },
+    de: { working: "arbeitet...", permTitle: "Claude fragt dich", back: "Zuruck zum Terminal" },
+    pt: { working: "trabalhando...", permTitle: "Claude esta perguntando", back: "Voltar ao terminal" },
+    hi: { working: "काम चल रहा है...", permTitle: "Claude पूछ रहा है", back: "टर्मिनल पर वापस" },
   };
   function t(locale: string) { return UI[locale] ?? UI.en; }
   let locale = "en";
@@ -72,6 +72,14 @@
     .okan-btn--ok:hover { background: #43A047; }
     .okan-btn--no { background: #555; color: #fff; }
     .okan-btn--no:hover { background: #666; }
+    .okan-close {
+      position: absolute; top: 8px; right: 10px;
+      background: none; border: none; color: #888;
+      font-size: 18px; cursor: pointer; padding: 4px;
+      line-height: 1;
+    }
+    .okan-close:hover { color: #fff; }
+    .okan-card { position: relative; }
     .okan-btn--back { background: #2196F3; color: #fff; }
     .okan-btn--back:hover { background: #1E88E5; }
     @keyframes okan-pulse {
@@ -191,10 +199,15 @@
           <span class="okan-icon">🍱</span>
           <span class="okan-card-title">${esc(text)}</span>
         </div>
+        <button class="okan-close">&times;</button>
         <div class="okan-card-actions">
           <button class="okan-btn okan-btn--back">${esc(t(locale).back)}</button>
         </div>
       </div>`;
+    badge.querySelector(".okan-close")?.addEventListener("click", () => {
+      if (escalateTimer) clearTimeout(escalateTimer);
+      setState("idle");
+    });
     badge.querySelector(".okan-btn--back")?.addEventListener("click", () => {
       if (escalateTimer) clearTimeout(escalateTimer);
       chrome.runtime.sendMessage({ type: "back_to_reality" });
