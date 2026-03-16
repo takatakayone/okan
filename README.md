@@ -1,6 +1,6 @@
 # 🍱 Okan (おかん)
 
-**Your AI is working. Go watch YouTube. Mom will call you back.**
+**Your Claude Code is working. Go watch YouTube. Mom will call you back.**
 
 ---
 
@@ -13,6 +13,11 @@ You open YouTube. Five minutes later, you realize Claude finished three minutes 
 She sits quietly in the corner of your browser. When Claude finishes, she yells. When Claude needs permission, she asks you right there -- no terminal switching needed. Like a Japanese mom who lets you play but always calls you back for dinner.
 
 <!-- TODO: Add demo GIF here -->
+
+## Prerequisites
+
+- [Claude Code](https://claude.ai/claude-code) installed and working
+- Chrome browser
 
 ## Install
 
