@@ -49,6 +49,7 @@ export class OkanServer {
   constructor(options: OkanServerOptions = {}) {
     this.mode = options.mode ?? "classic";
     this.locale = options.locale ?? "en";
+    this.localeSetByUser = !!options.locale;
     this.warpUrl = options.warpUrl ?? "https://www.youtube.com";
     this.autoWarp = options.autoWarp ?? true;
     this.focusSwitchTarget = options.focusSwitchTarget ?? "auto";

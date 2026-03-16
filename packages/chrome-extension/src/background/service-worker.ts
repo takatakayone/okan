@@ -167,21 +167,35 @@ chrome.runtime.onMessage.addListener((message, _sender, _sendResponse) => {
   }
 });
 
-// --- Tab activation: fetch state from server and send to tab ---
+// --- Send current state to a tab ---
 
-chrome.tabs.onActivated.addListener(async (activeInfo) => {
-  // Always fetch fresh state from server (don't rely on in-memory cache)
+async function syncStateToTab(tabId: number): Promise<void> {
   try {
     const res = await fetch(`${HTTP_API_BASE}/api/status`);
     if (res.ok) {
       const data = (await res.json()) as { state: string };
       if (data.state && data.state !== "idle") {
-        chrome.tabs.sendMessage(activeInfo.tabId, { type: "state_change", state: data.state }).catch(() => {});
+        chrome.tabs.sendMessage(tabId, { type: "state_change", state: data.state }).catch(() => {});
+        // Also send task_done if in done state
+        if (data.state === "done" && lastTaskDone) {
+          chrome.tabs.sendMessage(tabId, lastTaskDone).catch(() => {});
+        }
       }
     }
   } catch {
-    // Server not running, use cache
-    sendCurrentStateToTab(activeInfo.tabId);
+    sendCurrentStateToTab(tabId);
+  }
+}
+
+// Tab switch
+chrome.tabs.onActivated.addListener((activeInfo) => {
+  syncStateToTab(activeInfo.tabId);
+});
+
+// New tab or page navigation completed
+chrome.tabs.onUpdated.addListener((tabId, changeInfo) => {
+  if (changeInfo.status === "complete") {
+    syncStateToTab(tabId);
   }
 });
 

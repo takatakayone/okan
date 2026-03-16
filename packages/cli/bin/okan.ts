@@ -58,6 +58,14 @@ program
       },
     });
 
+    // Never crash
+    process.on("uncaughtException", (err) => {
+      console.error("[okan] Uncaught error (ignored):", err.message);
+    });
+    process.on("unhandledRejection", (err) => {
+      console.error("[okan] Unhandled rejection (ignored):", err);
+    });
+
     process.on("SIGINT", () => {
       console.log("\n🍱 Okan is going to sleep. Be good!");
       server.close();
