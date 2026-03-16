@@ -82,38 +82,37 @@ function applyI18n(locale: string): void {
   });
 }
 
-// --- Load state ---
+// --- Load ALL state from chrome.storage.local (single source of truth) ---
 
-chrome.storage.local.get(["okanEnabled"], (result) => {
+chrome.storage.local.get(["okanEnabled", "okanLocale", "okanMode"], (result) => {
+  // Toggle
   toggle.checked = result.okanEnabled !== false;
-});
 
-interface StatusResponse {
-  state: string;
-  mode: string;
-  locale: string;
-  extensionConnected: boolean;
-}
+  // Language
+  const locale = result.okanLocale ?? (navigator.language || "en").split("-")[0];
+  const validLocale = ["en","ja","zh","ko","es","fr","de","pt","hi"].includes(locale) ? locale : "en";
+  langSelect.value = validLocale;
+  applyI18n(validLocale);
 
-// Apply browser language immediately as fallback
-const browserLang = (navigator.language || "en").split("-")[0];
-const fallbackLocale = ["en","ja","zh","ko","es","fr","de","pt","hi"].includes(browserLang) ? browserLang : "en";
-langSelect.value = fallbackLocale;
-applyI18n(fallbackLocale);
-
-(async () => {
-  try {
-    const res = await fetch(`${HTTP_API_BASE}/api/status`);
-    if (res.ok) {
-      const data = (await res.json()) as StatusResponse;
-      setActiveMode(data.mode);
-      langSelect.value = data.locale ?? fallbackLocale;
-      applyI18n(data.locale ?? fallbackLocale);
-    }
-  } catch {
-    setActiveMode("classic");
+  // Mode
+  if (result.okanMode) {
+    setActiveMode(result.okanMode);
+  } else {
+    // Fallback: fetch from server
+    fetch(`${HTTP_API_BASE}/api/status`)
+      .then(r => r.json())
+      .then((data: any) => {
+        setActiveMode(data.mode ?? "classic");
+        // Also sync locale from server if not set locally
+        if (!result.okanLocale && data.locale) {
+          langSelect.value = data.locale;
+          applyI18n(data.locale);
+          chrome.storage.local.set({ okanLocale: data.locale });
+        }
+      })
+      .catch(() => setActiveMode("classic"));
   }
-})();
+});
 
 // --- Toggle ---
 
@@ -128,13 +127,14 @@ toggle.addEventListener("change", () => {
 modeButtons.forEach((btn) => {
   btn.addEventListener("click", async () => {
     const mode = (btn as HTMLElement).dataset.mode!;
+    setActiveMode(mode);
+    chrome.storage.local.set({ okanMode: mode });
     try {
       await fetch(`${HTTP_API_BASE}/api/config`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ mode }),
       });
-      setActiveMode(mode);
     } catch {}
   });
 });
@@ -150,6 +150,7 @@ function setActiveMode(mode: string): void {
 langSelect.addEventListener("change", async () => {
   const locale = langSelect.value;
   applyI18n(locale);
+  chrome.storage.local.set({ okanLocale: locale });
   try {
     await fetch(`${HTTP_API_BASE}/api/config`, {
       method: "POST",
@@ -159,4 +160,5 @@ langSelect.addEventListener("change", async () => {
   } catch {}
 });
 
-export {};
+// Force TypeScript to treat as module without emitting export
+void 0;

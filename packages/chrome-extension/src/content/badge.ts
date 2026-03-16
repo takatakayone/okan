@@ -106,9 +106,10 @@
   let okanEnabled = true;
   let escalateTimer: ReturnType<typeof setTimeout> | null = null;
 
-  chrome.storage.local.get(["okanBadgePosition", "okanEnabled"], (result) => {
+  chrome.storage.local.get(["okanBadgePosition", "okanEnabled", "okanLocale"], (result) => {
     if (result.okanBadgePosition) savedPosition = result.okanBadgePosition;
     if (result.okanEnabled === false) { okanEnabled = false; setState("idle"); }
+    if (result.okanLocale) locale = result.okanLocale;
   });
 
   // --- Message Handler ---
