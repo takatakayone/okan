@@ -1,0 +1,8 @@
+.claude
+PLAN.md
+node_modules/
+dist/
+*.tsbuildinfo
+.turbo/
+.DS_Store
+*.png

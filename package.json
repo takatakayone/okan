@@ -1,0 +1,23 @@
+{
+  "name": "okan-monorepo",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev --parallel",
+    "test": "vitest run",
+    "test:e2e": "node tests/e2e.test.mjs",
+    "lint": "turbo run lint"
+  },
+  "packageManager": "npm@10.9.0",
+  "devDependencies": {
+    "@playwright/test": "^1.58.2",
+    "playwright": "^1.58.2",
+    "prettier": "^3.5.0",
+    "turbo": "^2.5.0",
+    "typescript": "^5.8.0",
+    "vitest": "^3.1.0"
+  }
+}
