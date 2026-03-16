@@ -17,7 +17,7 @@ She sits quietly in the corner of your browser. When Claude finishes, she yells.
 ## Install
 
 ```bash
-npm install -g okan
+npm install -g okan-call
 ```
 
 Then add the [Chrome Extension](#chrome-extension). That's it. No config, no setup, no server to run. Everything is automatic.
