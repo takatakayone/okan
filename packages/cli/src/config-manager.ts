@@ -9,6 +9,7 @@ const CONFIG_PATH = path.join(os.homedir(), CONFIG_DIR, CONFIG_FILE);
 const DEFAULT_CONFIG: OkanConfig = {
   version: 1,
   mode: "classic",
+  locale: "auto",
   warpUrl: DEFAULT_WARP_URL,
   autoWarp: true,
   focusSwitch: {

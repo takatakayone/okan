@@ -25,6 +25,7 @@ export interface OkanServerOptions {
   warpUrl?: string;
   autoWarp?: boolean;
   focusSwitchTarget?: "auto" | string;
+  onConfigChange?: (key: string, value: string) => void;
 }
 
 export class OkanServer {
@@ -37,6 +38,7 @@ export class OkanServer {
   private warpUrl: string;
   private autoWarp: boolean;
   private focusSwitchTarget: "auto" | string;
+  private onConfigChange?: (key: string, value: string) => void;
 
   // Pending permission requests: id → { resolve }
   private pendingPermissions: Map<
@@ -50,6 +52,7 @@ export class OkanServer {
     this.warpUrl = options.warpUrl ?? "https://www.youtube.com";
     this.autoWarp = options.autoWarp ?? true;
     this.focusSwitchTarget = options.focusSwitchTarget ?? "auto";
+    this.onConfigChange = options.onConfigChange;
 
     this.state = new SessionState();
     this.ws = new OkanWebSocketServer(options.wsPort ?? WS_PORT);
@@ -225,11 +228,13 @@ export class OkanServer {
       const VALID_MODES: OkanMode[] = ["gentle", "classic", "mom"];
       if (body.mode && VALID_MODES.includes(body.mode as OkanMode)) {
         this.mode = body.mode as OkanMode;
+        this.onConfigChange?.("mode", this.mode);
         console.log(`[okan] Mode changed to: ${this.mode}`);
       }
       if (body.locale && SUPPORTED_LOCALES.includes(body.locale as Locale)) {
         this.locale = body.locale as Locale;
         this.localeSetByUser = true;
+        this.onConfigChange?.("locale", this.locale);
         console.log(`[okan] Locale changed to: ${this.locale}`);
       }
       res.writeHead(200, { "Content-Type": "application/json" });

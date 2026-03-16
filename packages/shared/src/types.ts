@@ -9,6 +9,7 @@ export type OkanMode = "gentle" | "classic" | "mom";
 export interface OkanConfig {
   version: number;
   mode: OkanMode;
+  locale: string;
   warpUrl: string;
   autoWarp: boolean;
   focusSwitch: {

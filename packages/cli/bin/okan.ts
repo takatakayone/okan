@@ -47,9 +47,15 @@ program
       wsPort: config.server.wsPort,
       httpPort: config.server.httpPort,
       mode: config.mode,
+      locale: config.locale === "auto" ? undefined : config.locale as any,
       warpUrl: config.warpUrl,
       autoWarp: config.autoWarp,
       focusSwitchTarget: config.focusSwitch.target,
+      onConfigChange: (key, value) => {
+        const c = loadConfig();
+        (c as unknown as Record<string, unknown>)[key] = value;
+        saveConfig(c);
+      },
     });
 
     process.on("SIGINT", () => {
