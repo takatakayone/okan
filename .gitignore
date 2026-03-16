@@ -6,3 +6,4 @@ dist/
 .turbo/
 .DS_Store
 *.png
+!packages/chrome-extension/src/assets/icons/*.png
