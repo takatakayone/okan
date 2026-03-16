@@ -1,100 +1,112 @@
 # 🍱 Okan (おかん)
 
-> She watches your back while you browse.
+**Your AI is working. Go watch YouTube. Mom will call you back.**
 
-Okan monitors your AI CLI tasks (like Claude Code) and notifies you in the browser when they finish -- like a Japanese mom calling you back for dinner.
+---
 
-No more alt-tabbing to check if Claude is done. Install Okan, kick off a task, browse freely. She'll let you know.
+You kicked off a big Claude Code task. It's gonna take a while.
 
-## Quick Start
+You open YouTube. Five minutes later, you realize Claude finished three minutes ago and has been waiting for you to approve a file write.
+
+**Okan fixes this.**
+
+She sits quietly in the corner of your browser. When Claude finishes, she yells. When Claude needs permission, she asks you right there -- no terminal switching needed. Like a Japanese mom who lets you play but always calls you back for dinner.
+
+<!-- TODO: Add demo GIF here -->
+
+## Install
 
 ```bash
 npm install -g okan
 ```
 
-That's it. Hooks for Claude Code are configured automatically.
+Then add the [Chrome Extension](#chrome-extension). That's it. No config, no setup, no server to run. Everything is automatic.
 
-Next, install the Chrome Extension:
-- **Development:** Load unpacked from `packages/chrome-extension/dist` (see [Contributing](CONTRIBUTING.md))
-- **Chrome Web Store:** Coming soon
+## What Happens
 
-Now just use Claude Code as usual. Okan works in the background.
+1. You run `claude "refactor the entire codebase"`
+2. A small **🍱 working...** badge appears in your browser corner
+3. You browse freely
+4. Claude needs permission? **A card pops up in your browser.** Click OK. Done.
+5. Claude finishes? **🍱 "ご飯できたよ！"** -- click Back, you're in your terminal
 
-## How It Works
-
-```
-Claude Code  -->  hooks  -->  okan-hook  -->  Local Server  -->  Chrome Extension
- (Terminal)                    (CLI)          :9393 (WS)          (Browser)
-                                             :9394 (HTTP)
-```
-
-1. **Claude Code hooks** fire events (task start, permission request, task done)
-2. **okan-hook** sends them to the local server (auto-starts if not running)
-3. **The server** relays via WebSocket to the Chrome Extension
-4. **The extension** shows a badge overlay on whatever page you're browsing
-
-Everything runs locally. No cloud. No accounts. No data leaves your machine.
+You never left the browser. You never missed a prompt.
 
 ## Features
 
-- **Working badge** -- small "🍱 working..." in the corner while Claude runs
-- **Done notification** -- "🍱 Dinner's ready!" card with a back button
-- **Permission forwarding** -- Claude's Y/N prompts appear in your browser. Answer without switching
-- **Focus switch** -- click "Back" to auto-focus your terminal
-- **Draggable cards** -- drag to reposition, position is remembered
-- **Enable/disable toggle** -- one click in the extension popup
-- **9 languages** -- EN, JA, ZH, KO, ES, FR, DE, PT, HI (auto-detected from browser)
-- **Zero config** -- server auto-starts, extension auto-connects, hooks auto-configure
-- **Graceful degradation** -- if the server isn't running, Claude Code works normally
+| | |
+|---|---|
+| **Working badge** | Small, unobtrusive. Bottom-right corner. You barely notice it. |
+| **Done notification** | A card appears. Click "Back" and your terminal gets focus. |
+| **Permission forwarding** | Claude asks Y/N? Answer from the browser. No context switch. |
+| **Draggable** | Don't like where the card is? Drag it. Position is remembered. |
+| **9 languages** | EN, JA, ZH, KO, ES, FR, DE, PT, HI. Auto-detected. |
+| **3 mom modes** | Gentle, Classic, or Mom (she escalates if you ignore her) |
+| **On/Off toggle** | One click in the extension popup. |
+| **Zero config** | Server auto-starts. Extension auto-connects. Hooks auto-configure. |
 
-## Modes
+## Mom Modes
 
-Pick the mom that suits you. Change from the extension popup or CLI.
+| Mode | When Claude finishes... | Vibe |
+|------|------------------------|------|
+| **Gentle** | "All done, honey!" | Patient. No rush. |
+| **Classic** | "ご飯できたよ！" | The default. |
+| **Mom** | "終わったわよ！早く戻りなさい！" | Shakes after 5 seconds. |
 
-| Mode | Done Message | Style |
-|------|-------------|-------|
-| **Gentle** | "All done, honey!" | Warm and patient |
-| **Classic** | "Dinner's ready!" | The default mom |
-| **Mom** | "STOP WATCHING! IT'S DONE!" | Escalates after 5 seconds |
+Change mode from the extension popup or:
 
 ```bash
 okan config set mode mom
 ```
 
-## Configuration
+## How It Works
 
-Config lives at `~/.okan/config.json`.
-
-```bash
-okan config set mode gentle
-okan config set autoWarp false
-okan config get
+```
+Claude Code  -->  hooks  -->  okan-hook  -->  Local Server  -->  Chrome Extension
+ (Terminal)                    (CLI)          (localhost)          (Your browser)
 ```
 
-| Key | Default | Description |
-|-----|---------|-------------|
-| `mode` | `classic` | `gentle`, `classic`, `mom` |
-| `locale` | `auto` | Language (auto-detected, or set manually) |
-| `autoWarp` | `true` | Open browser when task starts |
-| `warpUrl` | `https://www.youtube.com` | URL to open |
+Everything runs on your machine. No cloud. No accounts. No data sent anywhere.
 
-## Development
+When Claude Code runs, it triggers hooks. The hooks notify a tiny local server. The server pushes to the Chrome Extension via WebSocket. The extension shows the badge.
+
+When you click "OK" on a permission card, it goes back the same way: Extension --> Server --> Hook --> Claude Code continues.
+
+## Chrome Extension
+
+**Chrome Web Store:** Coming soon.
+
+**Development / Manual install:**
+1. Run `npm run build` in this repo
+2. Open `chrome://extensions` in Chrome
+3. Enable "Developer mode"
+4. Click "Load unpacked" and select `packages/chrome-extension/dist`
+
+## Configuration
+
+```bash
+okan config get              # show all
+okan config set mode gentle  # change mode
+okan config set autoWarp false
+```
+
+Config file: `~/.okan/config.json`
+
+## Supported AI Tools
+
+- **Claude Code** -- works out of the box
+- Cursor, Aider, and more -- coming soon
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ```bash
 git clone https://github.com/your-username/okan.git
 cd okan
-npm install
-npm run build
-npm test          # unit tests
-npm run test:e2e  # E2E tests (Playwright)
+npm install && npm run build
+npm test
 ```
-
-See [CONTRIBUTING.md](CONTRIBUTING.md) for the full guide.
-
-## Supported Tools
-
-- Claude Code (built-in)
-- More coming (Cursor, Aider, etc.)
 
 ## License
 
