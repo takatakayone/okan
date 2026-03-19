@@ -100,7 +100,6 @@ Config file: `~/.okan/config.json`
 ## Supported AI Tools
 
 - **Claude Code** -- works out of the box
-- Cursor, Aider, and more -- coming soon
 
 ## Contributing
 
