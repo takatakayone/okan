@@ -206,6 +206,8 @@
       </div>`;
     badge.querySelector(".okan-close")?.addEventListener("click", () => {
       if (escalateTimer) clearTimeout(escalateTimer);
+      // Tell server to go idle so other tabs don't show this again
+      chrome.runtime.sendMessage({ type: "dismiss" });
       setState("idle");
     });
     badge.querySelector(".okan-btn--back")?.addEventListener("click", () => {

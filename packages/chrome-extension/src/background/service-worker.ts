@@ -172,6 +172,20 @@ chrome.runtime.onMessage.addListener((message, _sender, _sendResponse) => {
     return;
   }
 
+  // Dismiss → reset server state to idle
+  if (message.type === "dismiss") {
+    fetch(`${HTTP_API_BASE}/api/session-end`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: "{}",
+    }).catch(() => {});
+    lastState = null;
+    lastTaskDone = null;
+    lastPermission = null;
+    chrome.storage.session?.set({ lastState: null, lastTaskDone: null, lastPermission: null });
+    return;
+  }
+
   // Permission response / back_to_reality from content script → forward to server
   if (
     ws?.readyState === WebSocket.OPEN &&
