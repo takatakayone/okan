@@ -1,6 +1,6 @@
 {
   "name": "okan-call",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Your AI task mom - watches your back while you browse",
   "type": "module",
   "bin": {
@@ -28,6 +28,12 @@
   "files": [
     "dist"
   ],
-  "keywords": ["claude", "claude-code", "ai", "cli", "productivity"],
+  "keywords": [
+    "claude",
+    "claude-code",
+    "ai",
+    "cli",
+    "productivity"
+  ],
   "license": "MIT"
 }
