@@ -18,7 +18,7 @@ async function ensureServerRunning(): Promise<boolean> {
   }
 
   try {
-    const okanBin = resolve(__dirname, "..", "..", "bin", "okan.js");
+    const okanBin = resolve(__dirname, "okan.js");
 
     const child = spawn(process.execPath, [okanBin, "start"], {
       detached: true,

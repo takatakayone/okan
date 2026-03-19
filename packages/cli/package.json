@@ -8,20 +8,26 @@
     "okan-hook": "./dist/bin/okan-hook.js"
   },
   "scripts": {
-    "build": "tsc",
-    "dev": "tsc --watch",
-    "postinstall": "node dist/src/postinstall.js || true",
-    "preuninstall": "node dist/src/preuninstall.js || true"
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "postinstall": "node dist/postinstall.js || true",
+    "preuninstall": "node dist/preuninstall.js || true"
   },
   "dependencies": {
-    "@okan-ai/shared": "*",
-    "@okan-ai/server": "*",
     "commander": "^13.1.0",
-    "chalk": "^5.4.0"
+    "chalk": "^5.4.0",
+    "ws": "^8.18.0"
   },
   "devDependencies": {
+    "@okan-ai/shared": "*",
+    "@okan-ai/server": "*",
+    "@types/ws": "^8.5.0",
+    "tsup": "^8.0.0",
     "typescript": "^5.8.0"
   },
+  "files": [
+    "dist"
+  ],
   "keywords": ["claude", "claude-code", "ai", "cli", "productivity"],
   "license": "MIT"
 }
