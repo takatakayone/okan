@@ -3,6 +3,7 @@
 **Your Claude Code is working. Go watch YouTube. Mom will call you back.**
 
 ---
+[![Product Hunt](https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=XXX)](https://www.producthunt.com/products/okan-claude-code-browser-notifications)
 
 You kicked off a big Claude Code task. It's gonna take a while.
 
