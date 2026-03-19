@@ -106,7 +106,7 @@ Config file: `~/.okan/config.json`
 See [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ```bash
-git clone https://github.com/your-username/okan.git
+git clone https://github.com/takatakayone/okan.git
 cd okan
 npm install && npm run build
 npm test
